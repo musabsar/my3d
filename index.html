@@ -1,235 +1,960 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My WebGL Showcase</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            text-align: center;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>my3d-MusabSar</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #ec3f0b;
+      --primary-dark:  #af340f;
+      --background: #121212;
+      --surface: #1E1E1E;
+      --surface-variant: #2a2a2a;
+      --header: #1C1C1C;
+      --text: #E0E0E0;
+      --text-secondary: #b0b0b0;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-        nav {
-            background: #dcdcdc;
-            padding: 10px;
-            text-align: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 10;
-            background-color: rgb(198,196,194);
-        }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
 
-        nav a {
-            color: #333;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
+    /* Header Styles */
+    header {
+      background-color: var(--header);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
 
-        nav a.active {
-            color: #aaa; /* Lighter color when active */
-        }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+    }
 
-        section {
-            padding: 100px 20px;
-            min-height: 100vh;
-        }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
 
-        .hero {
-            text-align: center;
-            padding-top: 50px;
-        }
+    .logo span {
+      color: var(--text);
+    }
 
-        .hero h1 {
-            font-size: 4em;
-            color: #333;
-        }
+    nav ul {
+      display: flex;
+      list-style-type: none;
+    }
 
-        .project-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
+    nav ul li {
+      margin-left: 25px;
+    }
 
-        .project {
-            width: 80%;
-            height: 0;
-            padding-top: 75%; /* 4:3 aspect ratio */
-            position: relative;
-            overflow: hidden;
-            border-radius: 3px;
-            box-shadow: 0 3px 3px rgba(0, 0, 0, 0.14);
-        }
+    nav ul li a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      padding: 5px 0;
+      transition: all 0.3s ease;
+    }
 
-        .project img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background-color: var(--primary-color);
+      bottom: 0;
+      left: 0;
+      transition: width 0.3s ease;
+    }
 
-        .project:hover img {
-            transform: scale(1.05);
-        }
+    nav ul li a:hover {
+      color: var(--primary-color);
+    }
 
-        .project .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
+    nav ul li a:hover::after {
+      width: 100%;
+    }
 
-        .project:hover .overlay {
-            opacity: 1;
-        }
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #000;
-            background-color: rgb(198,196,194);
-        }
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      min-height: 80vh;
+      padding: 50px 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(255, 255, 255, 0.135) 100%);
+    }
 
-	body {
-	    font-family: Arial, sans-serif;
-	    margin: 0;
-	    padding: 0;
-	    text-align: center;
-	    color: #333;
-	    position: relative;
-	}	
-	
-	body::before {
-    	content: "";
-    	position: fixed;
-    	top: 0;
-    	left: 0;
-    	width: 100%;
-    	height: 100%;
-   	 background-image: url('src/background.jpg'); /* Replace with your image path */
-   	 background-size: auto; /* Keeps the real size of the image */
-   	 background-repeat: repeat; /* Repeats the image */
-   	 background-position: top left; /* Aligns the image to the top left */
-   	 opacity: 1.0; /* Adjusts opacity to 50% */
-   	 z-index: -1; /* Puts it behind content */
-	}
-    </style>
+    .hero-content {
+      max-width: 800px;
+    }
 
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      color: var(--text-secondary);
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: var(--primary-color);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 169, 224, 0.3);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    /* Section Styles */
+    section {
+      padding: 80px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .section-header h2::after {
+      content: '';
+      position: absolute;
+      width: 50%;
+      height: 3px;
+      background-color: var(--primary-color);
+      bottom: -10px;
+      left: 25%;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* About Section */
+    .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .about-image {
+      overflow: hidden;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .about-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .about-text h3 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    .about-text p {
+      margin-bottom: 20px;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .skill-tag {
+      background-color: var(--surface-variant);
+      color: var(--primary-color);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* WebGL Projects Section */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .project-card {
+      background-color: var(--surface);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .project-image {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .project-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .project-card:hover .project-image img {
+      transform: scale(1.1);
+    }
+
+    .project-info {
+      padding: 20px;
+    }
+
+    .project-info h3 {
+      margin-bottom: 10px;
+      font-size: 1.3rem;
+    }
+
+    .project-info p {
+      color: var(--text-secondary);
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .project-tag {
+      background-color: var(--surface-variant);
+      color: var(--text-secondary);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+    }
+
+    .project-links {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .project-btn {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
+
+    /* Featured Project */
+    .featured-project {
+      background-color: var(--surface);
+      border-radius: 10px;
+      padding: 30px;
+      margin-top: 60px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .featured-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .featured-header h3 {
+      font-size: 1.8rem;
+      margin-right: 15px;
+    }
+
+    .featured-badge {
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .featured-content {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 30px;
+    }
+
+    .featured-image {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .featured-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .featured-description h4 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .featured-description p {
+      margin-bottom: 20px;
+    }
+
+    /* YouTube Section */
+    .playlists-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .playlist-card {
+      background-color: var(--surface);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .playlist-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .playlist-image {
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .playlist-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .playlist-image::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .play-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 3rem;
+      z-index: 1;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+    }
+
+    .playlist-card:hover .play-icon {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .playlist-info {
+      padding: 20px;
+    }
+
+    .playlist-info h3 {
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .playlist-info p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    .video-count {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .video-count i {
+      margin-right: 5px;
+    }
+
+    /* Contact Section */
+    .contact-section {
+      background-color: var(--surface);
+      padding: 60px 0;
+      margin-top: 80px;
+      border-radius: 10px;
+    }
+
+    .contact-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    .contact-info h3 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    .contact-info p {
+      margin-bottom: 25px;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .social-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--surface-variant);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text);
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-icon:hover {
+      background-color: var(--primary-color);
+      color: #fff;
+      transform: translateY(-5px);
+    }
+
+    .contact-form .form-group {
+      margin-bottom: 20px;
+    }
+
+    .contact-form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .contact-form input, 
+    .contact-form textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: var(--surface-variant);
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .contact-form textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .contact-form input:focus, 
+    .contact-form textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--header);
+      padding: 40px 0 20px;
+      margin-top: 80px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+
+    .footer-logo span {
+      color: var(--text);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary-color);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #333;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 992px) {
+      .about-content,
+      .featured-content,
+      .contact-content {
+        grid-template-columns: 1fr;
+      }
+
+      .about-image {
+        margin-bottom: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      nav ul {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background-color: var(--header);
+        flex-direction: column;
+        padding: 20px 0;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      nav ul.show {
+        display: flex;
+      }
+
+      nav ul li {
+        margin: 10px 0;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .hero-btns {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .projects-grid,
+      .playlists-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .section-header h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <nav>
-        <a href="#home" class="nav-link" data-target="home">Home</a>
-        <a href="#projects" class="nav-link" data-target="projects">Projects</a>
-        <a href="#research" class="nav-link" data-target="research">Research & Ideas</a>
-        <a href="#about" class="nav-link" data-target="about">About Me</a>
-        <a href="#contact" class="nav-link" data-target="contact">Contact</a>
-    </nav>
 
-    <section class="hero" id="home">
-        <h1>My WebGL Showcase</h1>
-        <p>Explore my WebGL projects, shader experiments, and ideas.</p>
-    </section>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">WebGL<span>Dev</span></div>
+        <nav>
+          <ul id="nav-menu">
+            <li><a href="#about">MusabSar-About Me</a></li>
+            <li><a href="#webgl">Projects</a></li>
+            <li><a href="#youtube">YouTube</a></li>
+            <li><a href="#contact">Contact Me</a></li>
+          </ul>
+          <div class="hamburger" id="hamburger">
+            <i class="fas fa-bars"></i>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
 
-    <section id="projects">
-        <h2>Projects</h2>
-        <p>Click on an image to view each interactive project!</p>
-        <div class="project-container">
-            <div class="project">
-                <a href="src/project1.html">
-                    <img src="src/show/project1.jpg" alt="Project 1">
-                    <div class="overlay">Random Walk Game</div>
-                </a>
-            </div>
-            <div class="project">
-                <a href="src/project2.html">
-                    <img src="src/thumbnail2.jpg" alt="Project 2">
-                    <div class="overlay">Project 2</div>
-                </a>
-            </div>
-            <div class="project">
-                <a href="src/project3.html">
-                    <img src="src/thumbnail3.jpg" alt="Project 3">
-                    <div class="overlay">Project 3</div>
-                </a>
-            </div>
-            <div class="project">
-                <a href="src/project4.html">
-                    <img src="src/thumbnail4.jpg" alt="Project 4">
-                    <div class="overlay">Project 4</div>
-                </a>
-            </div>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <h1>Welcom To My Website <br> </h1>
+        <p>This website showcases my learning journey, passion, and personal projects. I specialize in interactive 3D graphics and creative visualizations, using advanced WebGL techniques. Additionally, I explore other advanced methods in different fields beyond WebGL. Enjoy exploring my website!</p>
+        <p>NOTE: This website is 25% complete and still in progress. I update it every 1–2 weeks and will remove this note once it's finished.</p>
+
+        <div class="hero-btns">
+          <a href="#webgl" class="btn">View Projects</a>
+          <a href="#contact" class="btn btn-outline">Get In Touch</a>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <section id="research">
-        <h2>Research & Ideas</h2>
-        <p>Sharing my shader research, theories, and experiments.</p>
-    </section>
-
-    <section id="about">
+  <!-- About Section -->
+  <section id="about">
+    <div class="container">
+      <div class="section-header">
         <h2>About Me</h2>
-        <p>I'm passionate about graphics programming and WebGL.</p>
-    </section>
+        
+        <p>Learn more about my journey, skills, and passion for creative coding and 3D web experiences.</p>
+      </div>
+      <div class="about-content">
+        <div class="about-image">
+          <img src="/api/placeholder/500/400" alt="Developer Profile">
+        </div>
+        <div class="about-text">
+          <h3>Creative Developer & 3D Enthusiast</h3>
+          <p>Hi there! I'm a creative developer focused on building immersive web experiences with WebGL and Three.js. With a background in both design and development, I combine technical skills with artistic vision to create interactive 3D visualizations and applications.</p>
+          <p>My journey started with traditional web development, but I quickly fell in love with the possibilities of bringing 3D graphics to the browser. I'm passionate about pushing the boundaries of what's possible on the web, exploring new techniques, and sharing my knowledge with others.</p>
+          <div class="skills">
+            <span class="skill-tag">WebGL1</span>
+            <span class="skill-tag">WebGL2</span>
+            <span class="skill-tag">basic-Webgpu</span>
+            <span class="skill-tag">Three.js</span>
+            <span class="skill-tag">JavaScript-html-Js-Ts</span>
+            <span class="skill-tag">Using elctron or Node.js For JavaScript or Typescript</span>
+            <span class="skill-tag">GLSL2/3 Shaders For Webgl/webgpu</span>
+            <span class="skill-tag">GLSL3 Shaders For Blender3.6.7lts</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Creative Coding</span>
+            <span class="skill-tag">3D Modeling</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section id="contact">
-        <h2>Contact</h2>
-        <p>Let's connect! You can reach me at my social links below.</p>
-    </section>
+  <!-- WebGL Projects Section -->
+  <section id="webgl">
+    <div class="container">
+      <div class="section-header">
+        <h2>WebGL Projects</h2>
+        <p>A showcase of my interactive 3D graphics and creative coding experiments.</p>
+      </div>
+      
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="project-card">
+          <div class="project-image">
+            <img src="/api/placeholder/600/400" alt="Project 1">
+          </div>
+          <div class="project-info">
+            <h3>Particle Flow Simulation</h3>
+            <p>An interactive fluid simulation using WebGL compute shaders and particle systems to create mesmerizing visual effects.</p>
+            <div class="project-tags">
+              <span class="project-tag">WebGL</span>
+              <span class="project-tag">GLSL</span>
+              <span class="project-tag">Compute Shaders</span>
+            </div>
+            <div class="project-links">
+              <a href="project1_url" class="btn project-btn">View Demo</a>
+              <a href="project1_code_url" class="btn btn-outline project-btn">Source Code</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 2 -->
+        <div class="project-card">
+          <div class="project-image">
+            <img src="/api/placeholder/600/400" alt="Project 2">
+          </div>
+          <div class="project-info">
+            <h3>Interactive Terrain Explorer</h3>
+            <p>A procedurally generated 3D landscape with dynamic lighting and weather effects that users can explore in real-time.</p>
+            <div class="project-tags">
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">Procedural Generation</span>
+              <span class="project-tag">React</span>
+            </div>
+            <div class="project-links">
+              <a href="project2_url" class="btn project-btn">View Demo</a>
+              <a href="project2_code_url" class="btn btn-outline project-btn">Source Code</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 3 -->
+        <div class="project-card">
+          <div class="project-image">
+            <img src="/api/placeholder/600/400" alt="Project 3">
+          </div>
+          <div class="project-info">
+            <h3>Audio Visualizer</h3>
+            <p>A music visualization tool that reacts to audio input with custom 3D geometries and shader effects synchronized to the beat.</p>
+            <div class="project-tags">
+              <span class="project-tag">Web Audio API</span>
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">Custom Shaders</span>
+            </div>
+            <div class="project-links">
+              <a href="project3_url" class="btn project-btn">View Demo</a>
+              <a href="project3_code_url" class="btn btn-outline project-btn">Source Code</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 4 -->
+        <div class="project-card">
+          <div class="project-image">
+            <img src="/api/placeholder/600/400" alt="Project 4">
+          </div>
+          <div class="project-info">
+            <h3>3D Product Configurator</h3>
+            <p>A customizable 3D product viewer that allows users to interact with objects, change materials, and visualize different configurations.</p>
+            <div class="project-tags">
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">React</span>
+              <span class="project-tag">PBR Materials</span>
+            </div>
+            <div class="project-links">
+              <a href="project4_url" class="btn project-btn">View Demo</a>
+              <a href="project4_code_url" class="btn btn-outline project-btn">Source Code</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 5 -->
+        <div class="project-card">
+          <div class="project-image">
+            <img src="/api/placeholder/600/400" alt="Project 5">
+          </div>
+          <div class="project-info">
+            <h3>Generative Art System</h3>
+            <p>An algorithm-driven art generation tool that creates unique abstract compositions using mathematical patterns and user inputs.</p>
+            <div class="project-tags">
+              <span class="project-tag">Canvas API</span>
+              <span class="project-tag">WebGL</span>
+              <span class="project-tag">Generative Art</span>
+            </div>
+            <div class="project-links">
+              <a href="project5_url" class="btn project-btn">View Demo</a>
+              <a href="project5_code_url" class="btn btn-outline project-btn">Source Code</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Project Section -->
+      <div class="featured-project">
+        <div class="featured-header">
+          <h3>Featured Project</h3>
+          <span class="featured-badge">My Main Personal Project Driven by Passion</span>
+        </div>
+        <div class="featured-content">
+          <div class="featured-image">
+            <img src="/api/placeholder/800/500" alt="Featured Project">
+          </div>
+          <div class="featured-description">
+            <h4>Rendercast Real-Time 3d Engine</h4>
+            <p> This project is a WebGL-based 3D engine consisting of two main parts: the rendering engine and the audio engine.  
+              The rendering engine handles real-time 3D graphics using WebGL and WebXR, directly in the browser.</p>
+            <p>Using advanced rendering techniques, the experience maintains high performance while offering realistic lighting, physics interactions, and responsive environment design.</p>
+            <p>The audio engine is built on entirely new methods and algorithms that I developed myself—beyond what AI can create, imitate, or even conceive!
+              I plan to publish a research paper on this in the future and will share the link here</p>
+            <div class="project-tags">
+              <span class="project-tag">WebXR</span>
+              <span class="project-tag">Three.js</span>
+              <span class="project-tag">Spatial Audio</span>
+              <span class="project-tag">Physics</span>
+            </div>
+            <a href="featured_project_url" class="btn">Experience in Browser</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        &copy; 2025 Musab Mohammad Al-Sarayrah
-    </footer>
+  <!-- YouTube Section -->
+  <section id="youtube">
+    <div class="container">
+      <div class="section-header">
+        <h2>YouTube Tutorials</h2>
+        <p>Explore my educational content and learn how to create your own WebGL projects.</p>
+      </div>
+      
+      <div class="playlists-grid">
+        <!-- Playlist 1 -->
+        <div class="playlist-card">
+          <a href="https://youtu.be/O0Eu7N1yuN8">
+            <div class="playlist-image">
+              <img src="/api/placeholder/400/300" alt="WebGL Fundamentals">
+              <i class="fas fa-play-circle play-icon"></i>
+            </div>
+          </a>
+          <div class="playlist-info">
+            <h3>WebGL Fundamentals</h3>
+            <p>Learn the basics of creating 3D graphics in the browser with this beginner-friendly series.</p>
+            <div class="video-count">
+              <i class="fas fa-video"></i> 12 videos
+            </div>
+          </div>
+        </div>
+        
+        <!-- Playlist 2 -->
+        <div class="playlist-card">
+          <a href="https://youtube.com/playlist?list=YOUR_PLAYLIST_ID_2">
+            <div class="playlist-image">
+              <img src="/api/placeholder/400/300" alt="Advanced Three.js">
+              <i class="fas fa-play-circle play-icon"></i>
+            </div>
+          </a>
+          <div class="playlist-info">
+            <h3>Advanced Three.js</h3>
+            <p>Take your Three.js skills to the next level with advanced techniques and optimizations.</p>
+            <div class="video-count">
+              <i class="fas fa-video"></i> 8 videos
+            </div>
+          </div>
+        </div>
+        
+        <!-- Playlist 3 -->
+        <div class="playlist-card">
+          <a href="https://youtube.com/playlist?list=YOUR_PLAYLIST_ID_3">
+            <div class="playlist-image">
+              <img src="/api/placeholder/400/300" alt="GLSL Shader Programming">
+              <i class="fas fa-play-circle play-icon"></i>
+            </div>
+          </a>
+          <div class="playlist-info">
+            <h3>GLSL Shader Programming</h3>
+            <p>Deep dive into writing custom shaders for creating stunning visual effects in WebGL.</p>
+            <div class="video-count">
+              <i class="fas fa-video"></i> 15 videos
+            </div>
+          </div>
+        </div>
+        
+        <!-- Playlist 4 -->
+        <div class="playlist-card">
+          <a href="https://youtube.com/playlist?list=YOUR_PLAYLIST_ID_4">
+            <div class="playlist-image">
+              <img src="/api/placeholder/400/300" alt="Creative Coding Projects">
+              <i class="fas fa-play-circle play-icon"></i>
+            </div>
+          </a>
+          <div class="playlist-info">
+            <h3>Creative Coding Projects</h3>
+            <p>Follow along as we build complete creative coding projects from start to finish.</p>
+            <div class="video-count">
+              <i class="fas fa-video"></i> 10 videos
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // Select all sections and nav links
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-
-        // Function to highlight active section in the navbar
-        function highlightNavLink() {
-            let currentSection = "";
-
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
-                    currentSection = section.id;
-                }
-            });
-
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.target === currentSection) {
-                    link.classList.add('active');
-                }
-            });
-        }
-
-        // Listen for scroll events and update navbar
-        window.addEventListener('scroll', highlightNavLink);
-
-        // Call the function initially to highlight the correct link
-        highlightNavLink();
-    </script>
-</body>
-</html>
+  <!-- Contact Section -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Get In Touch</h2>
+        <p>Have a project in mind or just want to chat? I'd love to hear from you!</p>
+      </div>
+      
+      <div class="contact-content">
+        <div class="contact-info">
+          <h3>Let's Create Something Amazing</h3>
+          <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
+          <div class="
