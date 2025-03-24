@@ -7,14 +7,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #ec3f0b;
-      --primary-dark:  #af340f;
+      --primary-color: rgb(240, 38, 15);
+      --primary-dark:  #8d2c2c00;
       --background: #121212;
       --surface: #1E1E1E;
       --surface-variant: #2a2a2a;
       --header: #1C1C1C;
-      --text: #E0E0E0;
-      --text-secondary: #b0b0b0;
+      --text: #d3c6bb;
+      --text-secondary: #dbcdc4;
     }
     
     * {
@@ -104,14 +104,60 @@
       cursor: pointer;
       font-size: 1.5rem;
     }
-
-    /* Hero Section */
     .hero {
       display: flex;
       align-items: center;
       min-height: 80vh;
       padding: 50px 0;
-      background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(255, 255, 255, 0.135) 100%);
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 1.0; /* Full opacity for the content */
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('src/image.jpg'); /* Add your background image here */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      opacity: 0.6; /* Adjust the opacity of the background image */
+      z-index: -1;
+      animation: flicker 1.5s infinite alternate; /* Apply more intense flickering animation */
+    }
+
+    /* Flickering animation */
+    @keyframes flicker {
+      0% {
+        opacity: 0.90; /* Full opacity */
+      }
+      15% {
+        opacity: 0.85; /* Slightly reduced opacity */
+      }
+      30% {
+        opacity: 0.95; /* Moderate flicker */
+      }
+      45% {
+        opacity: 0.85; /* Strong flicker */
+      }
+      75% {
+        opacity: 0.90; /* Intense flicker */
+      }
+      100% {
+        opacity: 0.105; /* Full opacity again */
+      }
+
+      100% {
+        opacity: 0.80; /* Full opacity again */
+      }
     }
 
     .hero-content {
@@ -124,11 +170,21 @@
       line-height: 1.2;
     }
 
-    .hero p {
-      font-size: 1.1rem;
-      margin-bottom: 30px;
-      color: var(--text-secondary);
-    }
+
+.hero p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  color: var(--text-secondary); /* Text color */
+  background-color: rgba(0, 0, 0, 0.58); /* Black background with 15% opacity */
+  text-shadow: 
+     1px 1px  0  rgba(0, 0, 0, 0.25), /* Top-left shadow for stroke */
+    -1px -1px 0  rgba(0, 0, 0, 0.25), /* Bottom-right shadow for stroke */
+     1px -1px 0  rgba(0, 0, 0, 0.25), /* Top-right shadow for stroke */
+    -1px 1px  0  rgba(0, 0, 0, 0.25); /* Bottom-left shadow for stroke */
+
+  padding: 0 5px; /* Optional: Add some padding for a more "selected" feel */
+}
+
 
     .hero-btns {
       display: flex;
@@ -227,25 +283,34 @@
       margin-bottom: 20px;
     }
 
-    .skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
+    .skills a {
+      text-decoration: none;
+      color: inherit;
+      color: rgb(214, 52, 31);
+      margin: 4px 0; /* مسافة من الأعلى والأسفل لكل عنصر */
+      display: inline-block;
     }
 
     .skill-tag {
       background-color: var(--surface-variant);
       color: var(--primary-color);
-      padding: 8px 15px;
-      border-radius: 20px;
+      padding: 4px 8px;
+      border-radius: 4px;
       font-size: 0.9rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .skill-tag:hover {
+      background-color: var(--primary-color);
+      color: rgb(255, 255, 255);
+      transform: translateY(-2px);
     }
 
     /* WebGL Projects Section */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1.0fr));
       gap: 30px;
     }
 
@@ -263,7 +328,7 @@
     }
 
     .project-image {
-      height: 200px;
+      height: 150px;
       overflow: hidden;
       position: relative;
     }
@@ -651,6 +716,11 @@
         font-size: 2rem;
       }
     }
+    .red-text {
+        color: rgb(255, 50, 25) !important;
+      }
+
+
   </style>
 </head>
 <body>
@@ -708,17 +778,17 @@
           <p>Hi there! I'm a creative developer focused on building immersive web experiences with WebGL and Three.js. With a background in both design and development, I combine technical skills with artistic vision to create interactive 3D visualizations and applications.</p>
           <p>My journey started with traditional web development, but I quickly fell in love with the possibilities of bringing 3D graphics to the browser. I'm passionate about pushing the boundaries of what's possible on the web, exploring new techniques, and sharing my knowledge with others.</p>
           <div class="skills">
-            <span class="skill-tag">WebGL1</span>
-            <span class="skill-tag">WebGL2</span>
-            <span class="skill-tag">basic-Webgpu</span>
-            <span class="skill-tag">Three.js</span>
-            <span class="skill-tag">JavaScript-html-Js-Ts</span>
-            <span class="skill-tag">Using elctron or Node.js For JavaScript or Typescript</span>
-            <span class="skill-tag">GLSL2/3 Shaders For Webgl/webgpu</span>
-            <span class="skill-tag">GLSL3 Shaders For Blender3.6.7lts</span>
-            <span class="skill-tag">React</span>
-            <span class="skill-tag">Creative Coding</span>
-            <span class="skill-tag">3D Modeling</span>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API" target="_blank" class="skill-tag">WebGL1</a>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL2RenderingContext" target="_blank" class="skill-tag">WebGL2</a>
+            <a href="https://developer.chrome.com/blog/webgpu-release/" target="_blank" class="skill-tag">basic-Webgpu</a>
+            <a href="https://threejs.org/" target="_blank" class="skill-tag">Three.js</a>
+            <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" class="skill-tag">JavaScript-html-Js-Ts</a>
+            <a href="https://www.electronjs.org/" target="_blank" class="skill-tag">Using electron or Node.js For JavaScript or Typescript</a>
+            <a href="https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language" target="_blank" class="skill-tag">GLSL2/3 Shaders For Webgl/webgpu</a>
+            <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/index.html" target="_blank" class="skill-tag">GLSL3 Shaders For Blender3.6.7lts</a>
+            <a href="https://react.dev/" target="_blank" class="skill-tag">React</a>
+            <a href="https://creativecoding.com/" target="_blank" class="skill-tag">Creative Coding</a>
+            <a href="https://en.wikipedia.org/wiki/3D_modeling" target="_blank" class="skill-tag">3D Modeling</a>
           </div>
         </div>
       </div>
@@ -871,8 +941,7 @@
       <div class="section-header">
         <h2>YouTube Tutorials</h2>
         <p>Explore my educational content and learn how to create your own WebGL projects.</p>
-      </div>
-      
+        <p class="red-text">(Currently empty, only placeholder links for now.)</p>
       <div class="playlists-grid">
         <!-- Playlist 1 -->
         <div class="playlist-card">
@@ -957,4 +1026,6 @@
         <div class="contact-info">
           <h3>Let's Create Something Amazing</h3>
           <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. Whether you have a question or just want to say hi, I'll try my best to get back to you!</p>
+          <p><strong>Phone:</strong> <a href="tel:0799318512">079-931-8512</a></p>
+          <p><strong>Email:</strong> <a href="mailto:ramymu127@gmail.com">ramymu127@gmail.com</a></p>
           <div class="
