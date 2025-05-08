@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>my3d Projects - Musab Mohammad</title>
+  <style>
+    :root {
+      --primary-color: rgb(240, 38, 15);
+      --primary-dark: #8d2c2c00;
+      --background: #121212;
+      --surface: #1E1E1E;
+      --surface-variant: #2a2a2a;
+      --header: #1C1C1C;
+      --text: #d3c6bb;
+      --text-secondary: #dbcdc4;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 15px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    p {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .compact-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .project-box {
+      width: 90px;
+      height: 35px;
+      font-size: 13px;
+      background-color: var(--surface-variant);
+      border: 1px solid var(--primary-color);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      text-align: center;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      color: var(--text);
+    }
+
+    .project-box:hover {
+      background-color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(240, 38, 15, 0.3);
+    }
+
+    .main-display {
+      display: flex;
+      width: 100%;
+      height: 55vh;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    #preview-frame {
+      width: 60%;
+      height: 100%;
+      border: 1px solid var(--surface-variant);
+      border-radius: 5px;
+      background-color: var(--surface);
+    }
+
+    #code-viewer {
+      width: 40%;
+      height: 100%;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: 600;
+      border: 1px solid var(--surface-variant);
+      border-radius: 5px;
+      background-color: var(--surface);
+    }
+
+    .resize-handle {
+      width: 10px;
+      height: 100%;
+      background-color: var(--surface-variant);
+      cursor: col-resize;
+      position: absolute;
+      left: 60%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .resize-handle:hover {
+      background-color: var(--primary-color);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: var(--primary-color);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 3px 10px rgba(240, 38, 15, 0.3);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+      .compact-header {
+        flex-direction: column;
+      }
+      
+      .header-buttons {
+        align-self: flex-end;
+        margin-top: 10px;
+      }
+      
+      .main-display {
+        flex-direction: column;
+        height: auto;
+      }
+      
+      #preview-frame,
+      #code-viewer {
+        width: 100% !important;
+        min-height: 250px;
+      }
+      
+      .resize-handle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="compact-header">
+      <div class="header-text">
+        <div class="logo">my3d<span>Projects</span></div>
+        <h1>Musab Mohammad - WebGL Projects</h1>
+        <p>Click a project to view its 3D preview and source code</p>
+      </div>
+      <div class="header-buttons">
+        <a href="#" class="btn">Home</a>
+        <a href="#" class="btn btn-outline">Contact</a>
+      </div>
+    </div>
+
+    <div class="gallery">
+      <div class="project-box" onclick="loadProject('webgl_builds/project1/project1.html', 'webgl_builds/project1/project1.txt')">
+        Project 1
+      </div>
+      <div class="project-box" onclick="loadProject('webgl_builds/project2/project2.html', 'webgl_builds/project2/project2.txt')">
+        Project 2
+      </div>
+      <div class="project-box" onclick="loadProject('webgl_builds/project3/project3.html', 'webgl_builds/project3/project3.txt')">
+        Project 3
+      </div>
+      <!-- Add more projects here -->
+    </div>
+
+    <div class="main-display">
+      <iframe id="preview-frame" src=""></iframe>
+      <div class="resize-handle" id="resize-handle"></div>
+      <pre id="code-viewer">Select a project to view code...</pre>
+    </div>
+  </div>
+
+  <script>
+    function loadProject(webglUrl, codeUrl) {
+      // Highlight selected project box
+      const boxes = document.querySelectorAll('.project-box');
+      boxes.forEach(box => {
+        box.style.backgroundColor = 'var(--surface-variant)';
+        box.style.color = 'var(--text)';
+      });
+      
+      event.target.style.backgroundColor = 'var(--primary-color)';
+      event.target.style.color = '#fff';
+      
+      // Load project
+      document.getElementById('preview-frame').src = webglUrl;
+      fetch(codeUrl)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to load code');
+          return response.text();
+        })
+        .then(code => {
+          document.getElementById('code-viewer').textContent = code;
+        })
+        .catch(err => {
+          document.getElementById('code-viewer').textContent = 'Error loading code: ' + err.message;
+        });
+    }
+
+    // Resizable panel functionality
+    const resizeHandle = document.getElementById('resize-handle');
+    const previewFrame = document.getElementById('preview-frame');
+    const codeViewer = document.getElementById('code-viewer');
+    let isResizing = false;
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      document.body.style.cursor = 'col-resize';
+      previewFrame.style.userSelect = 'none';
+      previewFrame.style.pointerEvents = 'none';
+      codeViewer.style.userSelect = 'none';
+      codeViewer.style.pointerEvents = 'none';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+      
+      const containerWidth = document.querySelector('.main-display').offsetWidth;
+      const mouseX = e.clientX;
+      const containerLeft = document.querySelector('.main-display').getBoundingClientRect().left;
+      const newPreviewWidth = ((mouseX - containerLeft) / containerWidth) * 100;
+      
+      // Limit min and max width
+      const minWidth = 20; // 20% minimum width
+      const maxWidth = 80; // 80% maximum width
+      const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, newPreviewWidth));
+      
+      previewFrame.style.width = `${constrainedWidth}%`;
+      codeViewer.style.width = `${100 - constrainedWidth}%`;
+      resizeHandle.style.left = `${constrainedWidth}%`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isResizing = false;
+      document.body.style.cursor = '';
+      previewFrame.style.userSelect = '';
+      previewFrame.style.pointerEvents = '';
+      codeViewer.style.userSelect = '';
+      codeViewer.style.pointerEvents = '';
+    });
+  </script>
+</body>
+</html>
