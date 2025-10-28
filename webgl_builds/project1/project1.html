@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Planner</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        div { margin-bottom: 30px; }
+        h1, h2 { color: #333; }
+        h3 { color: #555; margin-top: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        button { margin-left: 10px; }
+        .reset-btn { 
+            background-color: #ff4444; 
+            color: white; 
+            border: none; 
+            padding: 5px 10px; 
+            cursor: pointer; 
+            border-radius: 4px;
+        }
+        .reset-btn:hover { background-color: #cc0000; }
+        .sub-goal { margin-left: 20px; }
+        .section-divider {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin: 35px 0;
+        }
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            display: inline-block;
+        }
+        .plan-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        .plan-btn:hover { background-color: #2980b9; }
+        .plan-section {
+            margin-top: 10px;
+            margin-left: 20px;
+            display: none;
+        }
+        .plan-section textarea {
+            width: 100%;
+            max-width: 500px;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weekly Planner</h1>
+
+    <!-- Weekly View -->
+    <div id="week"></div>
+
+    <hr class="section-divider">
+
+    <!-- Weekly Tasks -->
+    <div class="section-title">Weekly Tasks (reset weekly)</div>
+    <button class="reset-btn" onclick="resetWeekly()">Reset Weekly Tasks</button>
+    <ul id="weekly-tasks"></ul>
+
+    <hr class="section-divider">
+
+    <!-- Long-term Goals -->
+    <div class="section-title">Long-term Goals</div>
+    <div id="long-term-goals"></div>
+
+    <script>
+        const dailyTasks = [
+            "Pray 5 times",
+            "Read 5 pages Quran",
+            "Memorize Quran",
+            "10 min sport",
+            "My own work 70 min",
+            "25 min wear neck safety tool",
+            "25+18 min listen YouTube",
+            "25+15 min backend",
+            "25 body building",
+            "Task home OR store"
+        ];
+
+        const weeklyTasks = [
+            "Qiyam al-layl",
+            "Room/docan"
+        ];
+
+        function pad(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        function getDateString(date) {
+            return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+        }
+
+        function getWeekKey(date) {
+            const d = new Date(date);
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() + 3 - (d.getDay() || 7));
+            const yearStart = new Date(d.getFullYear(), 0, 1);
+            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return d.getFullYear() + '-W' + pad(weekNo);
+        }
+
+        function saveDone(dateStr, task, checked) {
+            let saved = localStorage.getItem('tasks-' + dateStr);
+            let doneTasks = saved ? JSON.parse(saved) : {};
+            doneTasks[task] = checked;
+            localStorage.setItem('tasks-' + dateStr, JSON.stringify(doneTasks));
+        }
+
+        function loadDaily(dateStr) {
+            let saved = localStorage.getItem('tasks-' + dateStr);
+            if (saved) {
+                let doneTasks = JSON.parse(saved);
+                for (let task of dailyTasks) {
+                    let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                    let chk = document.getElementById(dateStr + '-' + taskId);
+                    if (chk) chk.checked = doneTasks[task] || false;
+                }
+                if (document.getElementById(dateStr + '-Sawm_Monday')) {
+                    let chk = document.getElementById(dateStr + '-Sawm_Monday');
+                    chk.checked = doneTasks['Sawm Monday'] || false;
+                }
+            }
+            let smokeCount = localStorage.getItem('smoke-' + dateStr) || 0;
+            document.getElementById('smoke-' + dateStr).innerText = smokeCount;
+        }
+
+        function incrementSmoke(dateStr) {
+            let count = parseInt(localStorage.getItem('smoke-' + dateStr) || '0');
+            if (count < 6) {
+                count++;
+                localStorage.setItem('smoke-' + dateStr, count);
+                document.getElementById('smoke-' + dateStr).innerText = count;
+            } else {
+                alert('Reached limit of 6 smokes today!');
+            }
+        }
+
+        function resetDay(dateStr) {
+            localStorage.removeItem('tasks-' + dateStr);
+            localStorage.removeItem('smoke-' + dateStr);
+            let tasks = [...dailyTasks];
+            if (document.getElementById(dateStr + '-Sawm_Monday')) {
+                tasks.push('Sawm Monday');
+            }
+            for (let task of tasks) {
+                let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                let chk = document.getElementById(dateStr + '-' + taskId);
+                if (chk) chk.checked = false;
+            }
+            document.getElementById('smoke-' + dateStr).innerText = '0';
+        }
+
+        function saveWeekly(task, checked) {
+            let weekKey = getWeekKey(new Date());
+            let saved = localStorage.getItem('weekly-' + weekKey);
+            let done = saved ? JSON.parse(saved) : {};
+            done[task] = checked;
+            localStorage.setItem('weekly-' + weekKey, JSON.stringify(done));
+        }
+
+        function loadWeekly() {
+            let weekKey = getWeekKey(new Date());
+            let saved = localStorage.getItem('weekly-' + weekKey);
+            if (saved) {
+                let done = JSON.parse(saved);
+                for (let task of weeklyTasks) {
+                    let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                    let chk = document.getElementById('weekly-' + taskId);
+                    if (chk) chk.checked = done[task] || false;
+                }
+            }
+        }
+
+        function resetWeekly() {
+            let weekKey = getWeekKey(new Date());
+            localStorage.removeItem('weekly-' + weekKey);
+            for (let task of weeklyTasks) {
+                let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                let chk = document.getElementById('weekly-' + taskId);
+                if (chk) chk.checked = false;
+            }
+        }
+
+        function incrementLongTerm(key, spanId, amount, total) {
+            let count = parseInt(localStorage.getItem(key) || '0');
+            let newCount = count + amount;
+            if (newCount > total) {
+                alert('Goal reached!');
+                return;
+            }
+            localStorage.setItem(key, newCount);
+            document.getElementById(spanId).innerText = newCount;
+        }
+
+        function resetCounter(key, spanId) {
+            localStorage.setItem(key, 0);
+            document.getElementById(spanId).innerText = 0;
+        }
+
+        // New function to save note to localStorage
+        function saveNote(key, value) {
+            localStorage.setItem('note-' + key, value);
+        }
+
+        // New function to toggle note visibility
+        function toggleNote(noteId) {
+            let noteSection = document.getElementById('note-' + noteId);
+            noteSection.style.display = noteSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function loadLongTerm() {
+            let div = document.getElementById('long-term-goals');
+            div.innerHTML = '';
+
+            // === Lit WebGL Project (185 days) ===
+            let litSection = document.createElement('div');
+            let litCount = parseInt(localStorage.getItem('lit-webgl-days') || '0');
+            let litP = document.createElement('p');
+            litP.innerHTML = `<strong>Lit WebGL Project Days:</strong> <span id="lit-count">${litCount}</span>/185 <button onclick="incrementLongTerm('lit-webgl-days', 'lit-count', 1, 185)">+1</button> <button class="reset-btn" onclick="resetCounter('lit-webgl-days', 'lit-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('lit-webgl-days')">Show/Hide Plan</button>`;
+            litSection.appendChild(litP);
+            let litNote = document.createElement('div');
+            litNote.id = 'note-lit-webgl-days';
+            litNote.classList.add('plan-section');
+            let litNoteText = localStorage.getItem('note-lit-webgl-days') || 'Enter your detailed plan for the Lit WebGL Project...';
+            litNote.innerHTML = `<textarea onblur="saveNote('lit-webgl-days', this.value)">${litNoteText}</textarea>`;
+            litSection.appendChild(litNote);
+
+            let litUtP = document.createElement('p');
+            litUtP.classList.add('sub-goal');
+            litUtP.innerHTML = `<em>Lit Utube Project Goal:</em>`;
+            litSection.appendChild(litUtP);
+
+            // 14 WebGL Videos
+            let webglCount = parseInt(localStorage.getItem('lit-webgl-videos') || '0');
+            let webglP = document.createElement('p');
+            webglP.classList.add('sub-goal');
+            webglP.innerHTML = `WebGL Videos: <span id="webgl-videos-count">${webglCount}</span>/14 <button onclick="incrementLongTerm('lit-webgl-videos', 'webgl-videos-count', 1, 14)">+1</button> <button class="reset-btn" onclick="resetCounter('lit-webgl-videos', 'webgl-videos-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('lit-webgl-videos')">Show/Hide Plan</button>`;
+            litSection.appendChild(webglP);
+            let webglNote = document.createElement('div');
+            webglNote.id = 'note-lit-webgl-videos';
+            webglNote.classList.add('plan-section');
+            let webglNoteText = localStorage.getItem('note-lit-webgl-videos') || 'Enter your plan for WebGL Videos...';
+            webglNote.innerHTML = `<textarea onblur="saveNote('lit-webgl-videos', this.value)">${webglNoteText}</textarea>`;
+            litSection.appendChild(webglNote);
+
+            // 7 Webpages Videos
+            let webpagesCount = parseInt(localStorage.getItem('lit-webpages-videos') || '0');
+            let webpagesP = document.createElement('p');
+            webpagesP.classList.add('sub-goal');
+            webpagesP.innerHTML = `Webpages Videos: <span id="webpages-videos-count">${webpagesCount}</span>/7 <button onclick="incrementLongTerm('lit-webpages-videos', 'webpages-videos-count', 1, 7)">+1</button> <button class="reset-btn" onclick="resetCounter('lit-webpages-videos', 'webpages-videos-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('lit-webpages-videos')">Show/Hide Plan</button>`;
+            litSection.appendChild(webpagesP);
+            let webpagesNote = document.createElement('div');
+            webpagesNote.id = 'note-lit-webpages-videos';
+            webpagesNote.classList.add('plan-section');
+            let webpagesNoteText = localStorage.getItem('note-lit-webpages-videos') || 'Enter your plan for Webpages Videos...';
+            webpagesNote.innerHTML = `<textarea onblur="saveNote('lit-webpages-videos', this.value)">${webpagesNoteText}</textarea>`;
+            litSection.appendChild(webpagesNote);
+
+            // 9 Random Blender Animation Videos
+            let blenderCount = parseInt(localStorage.getItem('lit-blender-videos') || '0');
+            let blenderP = document.createElement('p');
+            blenderP.classList.add('sub-goal');
+            blenderP.innerHTML = `Random Blender Animation Videos: <span id="blender-videos-count">${blenderCount}</span>/9 <button onclick="incrementLongTerm('lit-blender-videos', 'blender-videos-count', 1, 9)">+1</button> <button class="reset-btn" onclick="resetCounter('lit-blender-videos', 'blender-videos-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('lit-blender-videos')">Show/Hide Plan</button>`;
+            litSection.appendChild(blenderP);
+            let blenderNote = document.createElement('div');
+            blenderNote.id = 'note-lit-blender-videos';
+            blenderNote.classList.add('plan-section');
+            let blenderNoteText = localStorage.getItem('note-lit-blender-videos') || 'Enter your plan for Random Blender Animation Videos...';
+            blenderNote.innerHTML = `<textarea onblur="saveNote('lit-blender-videos', this.value)">${blenderNoteText}</textarea>`;
+            litSection.appendChild(blenderNote);
+
+            // 21 Random Info Videos
+            let randomInfoCount = parseInt(localStorage.getItem('lit-random-info-videos') || '0');
+            let randomInfoP = document.createElement('p');
+            randomInfoP.classList.add('sub-goal');
+            randomInfoP.innerHTML = `Random Info Videos: <span id="random-info-videos-count">${randomInfoCount}</span>/21 <button onclick="incrementLongTerm('lit-random-info-videos', 'random-info-videos-count', 1, 21)">+1</button> <button class="reset-btn" onclick="resetCounter('lit-random-info-videos', 'random-info-videos-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('lit-random-info-videos')">Show/Hide Plan</button>`;
+            litSection.appendChild(randomInfoP);
+            let randomInfoNote = document.createElement('div');
+            randomInfoNote.id = 'note-lit-random-info-videos';
+            randomInfoNote.classList.add('plan-section');
+            let randomInfoNoteText = localStorage.getItem('note-lit-random-info-videos') || 'Enter your plan for Random Info Videos...';
+            randomInfoNote.innerHTML = `<textarea onblur="saveNote('lit-random-info-videos', this.value)">${randomInfoNoteText}</textarea>`;
+            litSection.appendChild(randomInfoNote);
+
+            div.appendChild(litSection);
+
+            // === $15 per Day Goal (865 days) ===
+            let dollarSection = document.createElement('div');
+            dollarSection.style.marginTop = '60px';
+            let dollarCount = parseInt(localStorage.getItem('goal-15-days') || '0');
+            let dollarP = document.createElement('p');
+            dollarP.innerHTML = `<strong>$15 per Day Goal Days:</strong> <span id="dollar-count">${dollarCount}</span>/865 <button onclick="incrementLongTerm('goal-15-days', 'dollar-count', 1, 865)">+1</button> <button class="reset-btn" onclick="resetCounter('goal-15-days', 'dollar-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('goal-15-days')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(dollarP);
+            let dollarNote = document.createElement('div');
+            dollarNote.id = 'note-goal-15-days';
+            dollarNote.classList.add('plan-section');
+            let dollarNoteText = localStorage.getItem('note-goal-15-days') || 'Enter your plan for $15 per Day Goal...';
+            dollarNote.innerHTML = `<textarea onblur="saveNote('goal-15-days', this.value)">${dollarNoteText}</textarea>`;
+            dollarSection.appendChild(dollarNote);
+
+            let videoGoalsP = document.createElement('p');
+            videoGoalsP.classList.add('sub-goal');
+            videoGoalsP.innerHTML = `<em>Video Goals:</em>`;
+            dollarSection.appendChild(videoGoalsP);
+
+            // 10 Dark Ambient Videos
+            let darkAmbientCount = parseInt(localStorage.getItem('dark-ambient-videos') || '0');
+            let darkAmbientP = document.createElement('p');
+            darkAmbientP.classList.add('sub-goal');
+            darkAmbientP.innerHTML = `Dark Ambient Videos: <span id="dark-ambient-count">${darkAmbientCount}</span>/10 <button onclick="incrementLongTerm('dark-ambient-videos', 'dark-ambient-count', 1, 10)">+1</button> <button class="reset-btn" onclick="resetCounter('dark-ambient-videos', 'dark-ambient-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('dark-ambient-videos')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(darkAmbientP);
+            let darkAmbientNote = document.createElement('div');
+            darkAmbientNote.id = 'note-dark-ambient-videos';
+            darkAmbientNote.classList.add('plan-section');
+            let darkAmbientNoteText = localStorage.getItem('note-dark-ambient-videos') || 'Enter your plan for Dark Ambient Videos...';
+            darkAmbientNote.innerHTML = `<textarea onblur="saveNote('dark-ambient-videos', this.value)">${darkAmbientNoteText}</textarea>`;
+            dollarSection.appendChild(darkAmbientNote);
+
+            // 10 Dark AI Store Videos
+            let darkAiStoreCount = parseInt(localStorage.getItem('dark-ai-store-videos') || '0');
+            let darkAiStoreP = document.createElement('p');
+            darkAiStoreP.classList.add('sub-goal');
+            darkAiStoreP.innerHTML = `Dark AI Store Videos: <span id="dark-ai-store-count">${darkAiStoreCount}</span>/10 <button onclick="incrementLongTerm('dark-ai-store-videos', 'dark-ai-store-count', 1, 10)">+1</button> <button class="reset-btn" onclick="resetCounter('dark-ai-store-videos', 'dark-ai-store-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('dark-ai-store-videos')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(darkAiStoreP);
+            let darkAiStoreNote = document.createElement('div');
+            darkAiStoreNote.id = 'note-dark-ai-store-videos';
+            darkAiStoreNote.classList.add('plan-section');
+            let darkAiStoreNoteText = localStorage.getItem('note-dark-ai-store-videos') || 'Enter your plan for Dark AI Store Videos...';
+            darkAiStoreNote.innerHTML = `<textarea onblur="saveNote('dark-ai-store-videos', this.value)">${darkAiStoreNoteText}</textarea>`;
+            dollarSection.appendChild(darkAiStoreNote);
+
+            // 10 Manhunt 1 Reshade Videos
+            let manhuntReshadeCount = parseInt(localStorage.getItem('manhunt-reshade-videos') || '0');
+            let manhuntReshadeP = document.createElement('p');
+            manhuntReshadeP.classList.add('sub-goal');
+            manhuntReshadeP.innerHTML = `Manhunt 1 Reshade Videos: <span id="manhunt-reshade-count">${manhuntReshadeCount}</span>/10 <button onclick="incrementLongTerm('manhunt-reshade-videos', 'manhunt-reshade-count', 1, 10)">+1</button> <button class="reset-btn" onclick="resetCounter('manhunt-reshade-videos', 'manhunt-reshade-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('manhunt-reshade-videos')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(manhuntReshadeP);
+            let manhuntReshadeNote = document.createElement('div');
+            manhuntReshadeNote.id = 'note-manhunt-reshade-videos';
+            manhuntReshadeNote.classList.add('plan-section');
+            let manhuntReshadeNoteText = localStorage.getItem('note-manhunt-reshade-videos') || 'Enter your plan for Manhunt 1 Reshade Videos...';
+            manhuntReshadeNote.innerHTML = `<textarea onblur="saveNote('manhunt-reshade-videos', this.value)">${manhuntReshadeNoteText}</textarea>`;
+            dollarSection.appendChild(manhuntReshadeNote);
+
+            // 10 My Map & City Project Videos
+            let mapCityCount = parseInt(localStorage.getItem('map-city-videos') || '0');
+            let mapCityP = document.createElement('p');
+            mapCityP.classList.add('sub-goal');
+            mapCityP.innerHTML = `My Map & City Project Videos: <span id="map-city-count">${mapCityCount}</span>/10 <button onclick="incrementLongTerm('map-city-videos', 'map-city-count', 1, 10)">+1</button> <button class="reset-btn" onclick="resetCounter('map-city-videos', 'map-city-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('map-city-videos')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(mapCityP);
+            let mapCityNote = document.createElement('div');
+            mapCityNote.id = 'note-map-city-videos';
+            mapCityNote.classList.add('plan-section');
+            let mapCityNoteText = localStorage.getItem('note-map-city-videos') || 'Enter your plan for My Map & City Project Videos...';
+            mapCityNote.innerHTML = `<textarea onblur="saveNote('map-city-videos', this.value)">${mapCityNoteText}</textarea>`;
+            dollarSection.appendChild(mapCityNote);
+
+            // 10 Random Videos
+            let randomVideosCount = parseInt(localStorage.getItem('random-videos') || '0');
+            let randomVideosP = document.createElement('p');
+            randomVideosP.classList.add('sub-goal');
+            randomVideosP.innerHTML = `Random Videos: <span id="random-videos-count">${randomVideosCount}</span>/10 <button onclick="incrementLongTerm('random-videos', 'random-videos-count', 1, 10)">+1</button> <button class="reset-btn" onclick="resetCounter('random-videos', 'random-videos-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('random-videos')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(randomVideosP);
+            let randomVideosNote = document.createElement('div');
+            randomVideosNote.id = 'note-random-videos';
+            randomVideosNote.classList.add('plan-section');
+            let randomVideosNoteText = localStorage.getItem('note-random-videos') || 'Enter your plan for Random Videos...';
+            randomVideosNote.innerHTML = `<textarea onblur="saveNote('random-videos', this.value)">${randomVideosNoteText}</textarea>`;
+            dollarSection.appendChild(randomVideosNote);
+
+            let additionalGoalsP = document.createElement('p');
+            additionalGoalsP.classList.add('sub-goal');
+            additionalGoalsP.innerHTML = `<em>Additional Goals:</em>`;
+            dollarSection.appendChild(additionalGoalsP);
+
+            // Website Goal
+            let websiteCount = parseInt(localStorage.getItem('website-goal') || '0');
+            let websiteP = document.createElement('p');
+            websiteP.classList.add('sub-goal');
+            websiteP.innerHTML = `Make my website for my top 10 music games movies things food ... youtube followers with vhs tape style and universe counter page for users: <span id="website-count">${websiteCount}</span>/1 <button onclick="incrementLongTerm('website-goal', 'website-count', 1, 1)">+1</button> <button class="reset-btn" onclick="resetCounter('website-goal', 'website-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('website-goal')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(websiteP);
+            let websiteNote = document.createElement('div');
+            websiteNote.id = 'note-website-goal';
+            websiteNote.classList.add('plan-section');
+            let websiteNoteText = localStorage.getItem('note-website-goal') || 'Enter your plan for the Website Goal...';
+            websiteNote.innerHTML = `<textarea onblur="saveNote('website-goal', this.value)">${websiteNoteText}</textarea>`;
+            dollarSection.appendChild(websiteNote);
+
+            // Dark JVC Goal
+            let darkJvcCount = parseInt(localStorage.getItem('dark-jvc-goal') || '0');
+            let darkJvcP = document.createElement('p');
+            darkJvcP.classList.add('sub-goal');
+            darkJvcP.innerHTML = `My dark Jvc like Tv and my engine with ui & myWorld: <span id="dark-jvc-count">${darkJvcCount}</span>/1 <button onclick="incrementLongTerm('dark-jvc-goal', 'dark-jvc-count', 1, 1)">+1</button> <button class="reset-btn" onclick="resetCounter('dark-jvc-goal', 'dark-jvc-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('dark-jvc-goal')">Show/Hide Plan</button>`;
+            dollarSection.appendChild(darkJvcP);
+            let darkJvcNote = document.createElement('div');
+            darkJvcNote.id = 'note-dark-jvc-goal';
+            darkJvcNote.classList.add('plan-section');
+            let darkJvcNoteText = localStorage.getItem('note-dark-jvc-goal') || 'Enter your plan for the Dark JVC Goal...';
+            darkJvcNote.innerHTML = `<textarea onblur="saveNote('dark-jvc-goal', this.value)">${darkJvcNoteText}</textarea>`;
+            dollarSection.appendChild(darkJvcNote);
+
+            div.appendChild(dollarSection);
+
+            // === Prayer Goal (4325 prayers) ===
+            let prayerDiv = document.createElement('div');
+            prayerDiv.style.marginTop = '60px';
+            let prayerCount = parseInt(localStorage.getItem('prayer-goal') || '0');
+            let prayerP = document.createElement('p');
+            prayerP.innerHTML = `<strong>Prayer Goal:</strong> <span id="prayer-count">${prayerCount}</span>/4325 <button onclick="incrementLongTerm('prayer-goal', 'prayer-count', 5, 4325)">+5</button> <button class="reset-btn" onclick="resetCounter('prayer-goal', 'prayer-count')">Reset</button> <button class="plan-btn" onclick="toggleNote('prayer-goal')">Show/Hide Plan</button>`;
+            prayerDiv.appendChild(prayerP);
+            let prayerNote = document.createElement('div');
+            prayerNote.id = 'note-prayer-goal';
+            prayerNote.classList.add('plan-section');
+            let prayerNoteText = localStorage.getItem('note-prayer-goal') || 'Enter your plan for the Prayer Goal...';
+            prayerNote.innerHTML = `<textarea onblur="saveNote('prayer-goal', this.value)">${prayerNoteText}</textarea>`;
+            prayerDiv.appendChild(prayerNote);
+            div.appendChild(prayerDiv);
+        }
+
+        window.onload = function() {
+            let today = new Date();
+            let day = today.getDay();
+            let diff = (day === 0 ? 6 : day - 1);
+            let monday = new Date(today.getTime() - diff * 24 * 60 * 60 * 1000);
+            let weekDiv = document.getElementById('week');
+            for (let i = 0; i < 7; i++) {
+                let dayDate = new Date(monday.getTime() + i * 24 * 60 * 60 * 1000);
+                let dateStr = getDateString(dayDate);
+                let dayName = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i];
+                let dayDiv = document.createElement('div');
+                dayDiv.style.border = '1px solid #ddd';
+                dayDiv.style.borderRadius = '8px';
+                dayDiv.style.padding = '15px';
+                dayDiv.style.marginBottom = '20px';
+                dayDiv.style.backgroundColor = '#f9f9f9';
+                dayDiv.innerHTML = `<h3 style="margin-top:0;">${dayName} (${dateStr})</h3><ul style="margin:10px 0;"></ul><p style="margin-bottom:0;">Smoke count: <strong><span id="smoke-${dateStr}">0</span>/6</strong> <button onclick="incrementSmoke('${dateStr}')">Add Smoke</button> <button class="reset-btn" onclick="resetDay('${dateStr}')">Reset Day</button></p>`;
+                weekDiv.appendChild(dayDiv);
+                let ul = dayDiv.querySelector('ul');
+                let tasks = [...dailyTasks];
+                if (dayName === 'Monday') {
+                    tasks.push('Sawm Monday');
+                }
+                for (let task of tasks) {
+                    let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                    let li = document.createElement('li');
+                    li.innerHTML = `${task} <input type="checkbox" id="${dateStr}-${taskId}">`;
+                    let chk = li.querySelector('input');
+                    chk.onchange = function() { saveDone(dateStr, task, this.checked); };
+                    ul.appendChild(li);
+                }
+                loadDaily(dateStr);
+            }
+            let weeklyUl = document.getElementById('weekly-tasks');
+            for (let task of weeklyTasks) {
+                let taskId = task.replace(/[^a-zA-Z0-9]/g, '_');
+                let li = document.createElement('li');
+                li.innerHTML = `${task} <input type="checkbox" id="weekly-${taskId}">`;
+                let chk = li.querySelector('input');
+                chk.onchange = function() { saveWeekly(task, this.checked); };
+                weeklyUl.appendChild(li);
+            }
+            loadWeekly();
+            loadLongTerm();
+        };
+    </script>
+</body>
+</html>
