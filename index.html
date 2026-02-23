@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musab | Physics • WebGL • Space</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">  
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Pinterest Verification -->
+<meta name="p:domain_verify" content="94417ac07e3765d414b3d4674aa1cf7a"/>
+
+<style>
+:root {
+  --bg: #0a0a0a;
+  --panel: #111111;
+  --panel-soft: #1a1a1a;
+  --text: #f0f0f0;
+  --muted: #aaaaaa;
+  --accent: #ff3333;
+  --accent-dark: #cc0000;
+  --accent-glow: rgba(255, 51, 51, 0.2);
+  --border: rgba(255,255,255,0.1);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 24px;
+}
+
+.container.narrow { max-width: 800px; }
+
+section { 
+  padding: 100px 0;
+  position: relative;
+}
+
+/* NAV */
+header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.logo { 
+  color: var(--accent); 
+  font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
+
+nav a {
+  margin-left: 28px;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  position: relative;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+nav a:hover {
+  color: var(--accent);
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 80px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  filter: blur(60px);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  font-weight: 800;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, var(--accent) 0%, #ff6666 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero p {
+  color: var(--muted);
+  max-width: 640px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+.actions {
+  margin-top: 48px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* BUTTONS - Based on Image */
+.btn {
+  padding: 16px 36px;
+  border: 2px solid var(--accent);
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 600;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background: transparent;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.btn:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(255, 51, 51, 0.2);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: white;
+  border: 2px solid transparent;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn.primary:hover {
+  background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(255, 51, 51, 0.3);
+}
+
+/* SECTIONS */
+h2 { 
+  color: var(--accent); 
+  margin-bottom: 32px;
+  font-weight: 800;
+  font-size: 2.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.section-desc {
+  color: var(--muted);
+  max-width: 720px;
+  margin-bottom: 60px;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  font-weight: 400;
+}
+
+/* CARDS - Based on Image Style */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 30px;
+  border-radius: 4px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,51,51,0.05), transparent);
+  transition: left 0.6s ease;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card h3 {
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.card p {
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.card .tech-tag {
+  display: inline-block;
+  background: rgba(255, 51, 51, 0.1);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 12px;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  font-weight: 600;
+}
+
+.card .youtube-icon {
+  color: var(--accent);
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* YOUTUBE CARDS - Simple Version */
+.youtube-videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.youtube-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 30px;
+  transition: all 0.4s ease;
+  box-shadow: var(--card-shadow);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.youtube-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,51,51,0.05), transparent);
+  transition: left 0.6s ease;
+}
+
+.youtube-card:hover::before {
+  left: 100%;
+}
+
+.youtube-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+}
+
+.youtube-card h3 {
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+.youtube-card p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.youtube-tag {
+  display: inline-block;
+  background: rgba(255, 51, 51, 0.1);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-top: 15px;
+  border: 1px solid rgba(255, 51, 51, 0.2);
+  font-weight: 600;
+}
+
+.youtube-icon {
+  color: #ff3333;
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.site-footer {
+  background: #080808;
+  border-top: 1px solid var(--border);
+  padding: 80px 0 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-col h3 {
+  color: var(--accent);
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.footer-col p {
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col ul li {
+  margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  padding: 4px 0;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.footer-col ul li a:hover {
+  color: var(--accent);
+  transform: translateX(5px);
+}
+
+/* SQUARE SOCIAL ICONS */
+.social-icons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.social-icons a {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255,51,51,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  background: rgba(255,51,51,0.05);
+}
+
+.social-icons a:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-3px);
+}
+
+.social-icons a i {
+  font-size: 1.1rem;
+}
+
+.footer-bottom {
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  text-align: center;
+  color: #888;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav { display: none; }
+  .hero h1 { font-size: 2.5rem; }
+  .hero p { font-size: 1.1rem; }
+  h2 { font-size: 2rem; }
+  section { padding: 80px 0; }
+  .actions { gap: 12px; }
+  .btn { padding: 14px 28px; }
+  .grid, .youtube-videos { grid-template-columns: 1fr; }
+  .footer-grid { gap: 32px; }
+  .social-icons a {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero h1 { font-size: 3rem; }
+  .grid, .youtube-videos { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="logo">MUSAB</div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#engine">WebGL Engine</a>
+      <a href="#experiments">Experiments</a>
+      <a href="#youtube">YouTube</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <h1>Physics, Space & WebGL</h1>
+    <p>Exploring quantum physics, mathematics, and old-school 3D graphics through interactive WebGL experiments and visualizations. Bridging science with creative technology.</p>
+    <div class="actions">
+      <a class="btn primary" href="#engine">
+        <i class="fas fa-code"></i> WebGL Engine
+      </a>
+      <a class="btn" href="#experiments">
+        <i class="fas fa-flask"></i> Experiments
+      </a>
+      <a class="btn" href="#youtube">
+        <i class="fab fa-youtube"></i> YouTube Videos
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container narrow">
+    <h2>About Me</h2>
+    <p class="section-desc">A physics enthusiast and developer exploring the intersection of quantum mechanics, computational mathematics, and real-time graphics.</p>
+    <div class="card">
+      <h3>Background & Interests</h3>
+      <p>• Quantum Physics & Mathematics</p>
+      <p>• WebGL & Real-time Graphics</p>
+      <p>• Scientific Visualization</p>
+      <p>• Creative Coding</p>
+      <div class="tech-tag">Jordan-based Developer</div>
+    </div>
+  </div>
+</section>
+
+<section id="engine">
+  <div class="container">
+    <h2>WebGL 3D Engine</h2>
+    <p class="section-desc">Custom-built WebGL2 engine with modern rendering techniques and old-school aesthetics.</p>
+    <div class="grid">
+      <a href="https://youtu.be/t3zWhFsr1_E?si=qg-SH1re-O8vtJxG" class="card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine #5</h3>
+        <p>Advanced shader techniques and lighting implementation in my custom WebGL engine.</p>
+        <div class="tech-tag">Advanced Tutorial</div>
+      </a>
+      <a href="https://youtu.be/NiSZp_B53nQ?si=dU4F4_sJ9W6wP2RM" class="card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine #2</h3>
+        <p>Building the camera system and implementing free-fly movement controls.</p>
+        <div class="tech-tag">Tutorial</div>
+      </a>
+      <a href="https://youtu.be/rB2QAZVwoh0?si=pVe1QHppvt5qD7Ix" class="card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine #1</h3>
+        <p>Setting up the basic WebGL2 pipeline and creating the renderer foundation.</p>
+        <div class="tech-tag">Tutorial</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="experiments">
+  <div class="container">
+    <h2>Experiments & Demos</h2>
+    <p class="section-desc">
+      Interactive WebGL visualizations exploring quantum phenomena and mathematical concepts.
+    </p>
+
+    <div class="grid">
+
+      <!-- Experiment 1 - Linked -->
+      <a href="webgl_builds/get-space/last.html" class="card">
+        <h3>Space Test</h3>
+        <p>An interactive, zoomable cosmic timeline exploring the universe from the Big Bang to today—an animated journey through 13.8 billion years of history. Version 1.0 (work in progress): currently limited and evolving, with improvements planned over time.</p>        <div class="tech-tag">Live Demo</div>
+      </a>
+
+      <!-- Placeholder 2 -->
+      <a href="webgl_builds/project2/project2.html" class="card">
+        <h3>My Name 3d Webgl 1.0</h3>
+        <p>Interactive WebGL demo with real-time physics simulation.</p>
+        <div class="tech-tag">Live Demo</div>
+      </a>
+
+      <!-- Placeholder 3 -->
+      <a href="webgl_builds/project3/project3.html" class="card">
+        <h3>Mu'tah University Arabic Test Fun</h3>
+        <p>Interactive WebGL demo with real-time physics simulation.</p>
+        <div class="tech-tag">Live Demo</div>
+      </a>
+
+      <!-- Placeholder 4 -->
+      <div class="card">
+        <h3>Retro 3D</h3>
+        <p>Coming soon: low-poly retro WebGL experiments.</p>
+        <div class="tech-tag">Coming Soon</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="youtube">
+  <div class="container">
+    <h2>YouTube Videos</h2>
+    <p class="section-desc">Watch my latest WebGL tutorials, physics visualizations, and coding sessions.</p>
+    
+    <!-- YouTube Videos Grid - Simple Cards -->
+    <div class="youtube-videos" id="youtube-videos-container">
+      <!-- Video 1 -->
+      <a href="https://youtu.be/t3zWhFsr1_E?si=qg-SH1re-O8vtJxG" class="youtube-card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine Tutorial #5</h3>
+        <p>Advanced shader techniques and lighting implementation in my custom WebGL engine.</p>
+        <p>Learn about custom shaders, framebuffers, and advanced rendering techniques.</p>
+        <div class="youtube-tag">Advanced Tutorial</div>
+      </a>
+      
+      <!-- Video 2 -->
+      <a href="https://youtu.be/NiSZp_B53nQ?si=dU4F4_sJ9W6wP2RM" class="youtube-card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine Tutorial #2</h3>
+        <p>Building the camera system and implementing free-fly movement controls.</p>
+        <p>Quaternion rotations, matrix transformations, and smooth camera interpolation.</p>
+        <div class="youtube-tag">Tutorial</div>
+      </a>
+      
+      <!-- Video 3 -->
+      <a href="https://youtu.be/rB2QAZVwoh0?si=pVe1QHppvt5qD7Ix" class="youtube-card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>WebGL Engine Tutorial #1</h3>
+        <p>Setting up the basic WebGL2 pipeline and creating the renderer foundation.</p>
+        <p>From zero to a working 3D renderer with vertex buffers and shaders.</p>
+        <div class="youtube-tag">Beginner Tutorial</div>
+      </a>
+      
+      <!-- Video 4 -->
+      <a href="https://youtu.be/hJzIa8gnFq4?si=zo5R2rFW2hrTgvHj" class="youtube-card" target="_blank">
+        <h3><i class="fab fa-youtube youtube-icon"></i>120VTR Project Showcase</h3>
+        <p>Demonstration of my 120VTR project with real-time physics simulations.</p>
+        <p>Real-time physics, particle systems, and interactive 3D visualization.</p>
+        <div class="youtube-tag">Project Showcase</div>
+      </a>
+    </div>
+    
+    <div style="margin-top: 50px; text-align: center;">
+      <a class="btn primary" href="https://youtube.com/@musabsarjo" target="_blank" style="padding: 16px 40px;">
+        <i class="fab fa-youtube"></i> View All Videos on YouTube
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer" id="contact">
+  <div class="container footer-grid">
+
+    <div class="footer-col">
+      <h3>Musab Al-Sarayrah</h3>
+      <p>
+        Physics enthusiast, developer, and content creator from Jordan.
+        Exploring the intersection of quantum physics, technology,
+        and creative expression through WebGL and scientific visualization.
+      </p>
+      <div class="social-icons">
+        <a href="https://youtube.com/@musabsarjo" aria-label="YouTube" target="_blank">
+          <i class="fab fa-youtube"></i>
+        </a>
+        <a href="https://github.com/musabsar" aria-label="GitHub" target="_blank">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="https://www.facebook.com/share/18J7MoGNph/" aria-label="Facebook" target="_blank">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://pin.it/5UW2YDaf2" aria-label="Pinterest" target="_blank">
+          <i class="fab fa-pinterest"></i>
+        </a>
+        <a href="https://wa.me/962799318512" aria-label="WhatsApp" target="_blank">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="mailto:ramymu127@gmail.com" aria-label="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#engine">WebGL Projects</a></li>
+        <li><a href="#experiments">Physics Experiments</a></li>
+        <li><a href="#youtube">YouTube Videos</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h3>Contact Information</h3>
+      <p><strong>Email:</strong> ramymu127@gmail.com</p>
+      <p><strong>Phone:</strong> +962 799 318 512</p>
+      <p><strong>WhatsApp:</strong> +962 799 318 512</p>
+      <p><strong>Location:</strong> Jordan</p>
+      <p><strong>YouTube:</strong> @musabsarjo</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Musab Mohammad Al-Sarayrah. All rights reserved.<br>
+    Exploring quantum physics and creative development through modern web technologies.
+  </div>
+</footer>
+
+<script>
+// Easy way to add/edit YouTube video cards
+// Copy this structure and update the details:
+
+/*
+<a href="YOUR_YOUTUBE_LINK" class="youtube-card" target="_blank">
+  <h3><i class="fab fa-youtube youtube-icon"></i>Your Video Title</h3>
+  <p>Short description of your video.</p>
+  <p>Additional details if needed.</p>
+  <div class="youtube-tag">Category</div>
+</a>
+*/
+
+console.log("To add more YouTube videos:");
+console.log("1. Find the div with id='youtube-videos-container'");
+console.log("2. Copy one of the existing youtube-card structures");
+console.log("3. Update the link, title, description, and tag");
+console.log("4. All cards have the same clean, minimal design");
+</script>
+
+</body>
+</html>

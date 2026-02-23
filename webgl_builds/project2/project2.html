@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>mutahUnvByMusabSar</title>
+  <style>
+    body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    canvas { border: 1px solid #333; }
+  </style>
+</head>
+<body>
+<canvas id="mutahUnv" width="800" height="480"></canvas>
+
+<script type="module">
+const canvas =document.getElementById("mutahUnv");
+const gl= canvas.getContext("webgl2");
+if (!gl) { alert("gl 2 is not supported your device is poor"); }
+
+function loadOBJ(url) {
+  return fetch(url).then(r => r.text()).then(parseOBJ);
+}
+
+// i made chat gpt make me this parseOBJ(text); function
+function parseOBJ(text) {
+  const lines = text.split("\n");
+  const positions = [], texcoords = [], normals = [];
+  const finalPositions = [], finalTexcoords = [], finalNormals = [];
+
+  const p = [], t = [], n = [];
+
+  for (let line of lines) {
+    const parts = line.trim().split(/\s+/);
+    switch (parts[0]) {
+      case 'v':  p.push([+parts[1], +parts[2], +parts[3]]); break;
+      case 'vt': t.push([+parts[1], 1 - +parts[2]]); break;
+      case 'vn': n.push([+parts[1], +parts[2], +parts[3]]); break;
+      case 'f':
+        for (let i = 1; i <= 3; i++) 
+        {
+          const [vi, ti, ni] = parts[i].split("/").map(x => parseInt(x)-1);
+          finalPositions.push(...p[vi]);
+          finalTexcoords.push(...t[ti]);
+          finalNormals.push(...n[ni]);
+        } break;
+    }
+  }
+  return {
+    positions: new Float32Array(finalPositions),
+    texcoords:new Float32Array(finalTexcoords),
+    normals: new Float32Array(finalNormals)
+  };
+}
+
+const vsBasic01 =`#version 300 es
+in vec3 aPos;
+in vec2 aTexc;
+in vec3 aNorm;
+
+uniform mat4 uModel, uView, uProjection;
+uniform vec3 uLitDir;
+
+out vec2 vTexcoord;
+out float vLight;
+
+void main() {
+  vec3 normal = normalize(mat3(uModel) * aNorm);
+  vLight =max(dot(normal, normalize(uLitDir)), 0.15);
+  vTexcoord = aTexc;
+  gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);
+}`;
+
+const fsBasic01 = `#version 300 es
+precision mediump float;
+in vec2 vTexcoord;
+in float vLight;
+out vec4 outColor;
+
+uniform sampler2D uTexture;
+
+void main() {
+  vec4 texColor = texture(uTexture, vTexcoord);
+  outColor = vec4(texColor.rgb * vLight, texColor.a);
+}`;
+
+function createShader(gl, type,src) {
+  const shade = gl.createShader(type);
+  gl.shaderSource(shade, src);
+  gl.compileShader(shade);
+  if (!gl.getShaderParameter(shade, gl.COMPILE_STATUS)) {
+    console.error(gl.getShaderInfoLog(shade));
+    return null;
+  } return shade;
+}
+
+function createProgram(gl, vs, fs) {
+  const prog =gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(ptog));
+    return null;
+  } return prog;
+}
+
+function loadTexture(gl,url) {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1,1,0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,255,255]));
+  const img =new Image();
+  img.onload = () => {
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    gl.generateMipmap(gl.TEXTURE_2D);
+  };
+  img.src = url;
+  return tex;
+}
+
+import * as mat4 from 'https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/esm/mat4.js';
+
+(async () => {
+  const obj = await loadOBJ("myname_webgl.obj");
+  const tex = loadTexture(gl, "myname_webgl.jpg");
+
+  const vs = createShader(gl, gl.VERTEX_SHADER, vsBasic01);
+  const fs = createShader(gl, gl.FRAGMENT_SHADER, fsBasic01);
+  const program = createProgram(gl, vs, fs);
+  gl.useProgram(program);
+
+  const vao =gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
+  // pos
+  const posBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, obj.positions, gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(program, "aPos");
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+
+  // texture coords
+  const texBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,texBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, obj.texcoords, gl.STATIC_DRAW);
+  const texLoc= gl.getAttribLocation(program,"aTexc");
+  gl.enableVertexAttribArray(texLoc);
+  gl.vertexAttribPointer(texLoc,2, gl.FLOAT, false, 0, 0);
+
+  // normals
+  const normBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, normBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, obj.normals, gl.STATIC_DRAW);
+  const normLoc =gl.getAttribLocation(program, "aNorm");
+  gl.enableVertexAttribArray(normLoc);
+  gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
+
+  // u locations
+  const uModel = gl.getUniformLocation(program, "uModel");
+  const uView = gl.getUniformLocation(program, "uView");
+  const uProjection =gl.getUniformLocation(program, "uProjection");
+  const uLitDir = gl.getUniformLocation(program, "uLitDir");
+
+  const view = mat4.create();
+  mat4.lookAt(view,[0,0,2.5], [0, 0, 0], [0, 1, 0]);
+
+  const proj = mat4.create();
+  mat4.perspective(proj, Math.PI / 7, 800 / 480, 0.1, 100);
+
+  gl.uniformMatrix4fv(uView, false, view);
+  gl.uniformMatrix4fv(uProjection, false, proj);
+  gl.uniform3fv(uLitDir, [1, 0.5, 1]);
+
+  // anim
+  let angle = 0;
+  function draw() {
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.0, 0.0, 0.00, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    //gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+
+    // transformation scale and rotate
+    const model = mat4.create();
+
+    let scaleio = 0.15 + 0.05;
+    mat4.scale(model, model, [scaleio, scaleio, scaleio]); // scale
+    mat4.rotateY(model, model, angle);  // around y-axis
+    gl.uniformMatrix4fv(uModel, false, model);
+
+    gl.drawArrays(gl.TRIANGLES, 0, obj.positions.length / 3);
+    angle += 0.005;
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
+</body>
+</html>
