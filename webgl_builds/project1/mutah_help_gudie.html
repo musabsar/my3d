@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جامعة مؤتة | دليل المعاملات الرسمي</title>
+    <!-- Google Fonts Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
+        body {
+            background-color: #f5f5f5;
+            color: #2c3e50;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* الألوان الرسمية: أحمر داكن (ماروني) مع ذهبي كلون ثانوي هادئ */
+        :root {
+            --mu-red: #8B1E3F;      /* أحمر داكن رسمي */
+            --mu-gold: #C49A6C;      /* ذهبي هادئ غير صاخب */
+            --mu-gray: #f0f0f0;
+            --border-color: #ddd;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+        }
+        /* شريط علوي بسيط */
+        .top-bar {
+            background-color: #fff;
+            border-bottom: 3px solid var(--mu-red);
+            padding: 0.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            background-color: var(--mu-red);
+            color: white;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+        .logo-text h2 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--mu-red);
+            margin: 0;
+            line-height: 1.2;
+        }
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+        .contact-top {
+            display: flex;
+            gap: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .contact-top i {
+            color: var(--mu-red);
+            margin-left: 5px;
+        }
+        .header {
+            background: linear-gradient(145deg, #f9f9f9, #fff);
+            color: var(--text-dark);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--mu-red);
+        }
+        .header h1 i {
+            color: var(--mu-gold);
+            margin-left: 0.7rem;
+        }
+        .header p {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        .back-home-btn {
+            background: var(--mu-red);
+            color: white;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            border: 1px solid var(--mu-red);
+        }
+        .back-home-btn:hover {
+            background: #a02b4a;
+        }
+        .back-home-btn i {
+            margin-left: 0.5rem;
+        }
+
+        /* الصفحة الرئيسية */
+        .home-screen {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+        }
+        .home-screen h2 {
+            color: var(--mu-red);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--mu-gold);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        .cards-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .choice-card {
+            background: white;
+            width: 300px;
+            padding: 2rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid var(--border-color);
+            border-bottom: 4px solid var(--mu-red);
+            text-align: center;
+        }
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(139,30,63,0.1);
+        }
+        .choice-card i {
+            font-size: 3.5rem;
+            color: var(--mu-red);
+            margin-bottom: 1rem;
+        }
+        .choice-card h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--mu-red);
+            margin-bottom: 0.7rem;
+        }
+        .choice-card p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* شاشة التصفح */
+        .browse-screen {
+            max-width: 1300px;
+            margin: 1rem auto 2rem;
+            padding: 0 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+        .browse-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+        }
+        .browse-header h2 {
+            color: var(--mu-red);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .browse-header h2 i {
+            color: var(--mu-gold);
+            margin-left: 0.5rem;
+        }
+        .search-box {
+            flex: 1;
+            max-width: 350px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.8rem;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--mu-red);
+        }
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--mu-red);
+            font-size: 1rem;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+        }
+        .filter-title {
+            font-weight: 700;
+            color: var(--mu-red);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+            border-right: 3px solid var(--mu-gold);
+            padding-right: 0.8rem;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .filter-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        .filter-btn i {
+            color: var(--mu-red);
+            font-size: 0.9rem;
+        }
+        .filter-btn.active {
+            background: var(--mu-red);
+            color: white;
+            border-color: var(--mu-red);
+        }
+        .filter-btn.active i {
+            color: white;
+        }
+        .filter-btn:hover {
+            background: #f9e0e7;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            transition: 0.2s;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .card:hover {
+            box-shadow: 0 8px 18px rgba(139,30,63,0.1);
+            border-color: var(--mu-red);
+        }
+        .card-header {
+            background: #fafafa;
+            color: var(--text-dark);
+            padding: 0.7rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-header .unit-badge {
+            background: var(--mu-red);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .card-body {
+            padding: 1rem;
+            flex: 1;
+        }
+        .card-code {
+            font-size: 0.8rem;
+            color: var(--mu-red);
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.4rem;
+        }
+        .card-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .card-footer {
+            padding: 0.7rem 1rem;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .case-tag {
+            background: #f0f0f0;
+            padding: 0.2rem 0.7rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+        .stat-item {
+            background: white;
+            padding: 0.4rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            color: var(--mu-red);
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        /* المودال */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 4px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            left: 15px;
+            top: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .close-modal:hover {
+            color: var(--mu-red);
+        }
+        .modal-header {
+            border-bottom: 2px solid var(--mu-gold);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .modal-header h2 {
+            color: var(--mu-red);
+            font-weight: 900;
+            font-size: 1.6rem;
+        }
+        .modal-header .modal-code {
+            color: var(--mu-red);
+            font-weight: 500;
+            margin-top: 0.2rem;
+        }
+        .modal-section {
+            margin-bottom: 1.8rem;
+        }
+        .modal-section h3 {
+            color: var(--mu-red);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+        }
+        .modal-section h3 i {
+            color: var(--mu-gold);
+        }
+        .steps-list {
+            list-style: none;
+            padding-right: 0;
+        }
+        .steps-list li {
+            background: #f9f9f9;
+            padding: 0.7rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            border-right: 3px solid var(--mu-gold);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        .tips-box {
+            background: #fcf9f2;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #f0e0c0;
+            color: #5c3e2e;
+            font-size: 0.95rem;
+        }
+
+        /* تذييل مع معلومات التواصل */
+        .footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 1.5rem 1rem 1rem;
+            margin-top: 3rem;
+            border-top: 4px solid var(--mu-gold);
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 2rem;
+            text-align: right;
+        }
+        .footer-section {
+            flex: 1 1 200px;
+        }
+        .footer-section h4 {
+            color: var(--mu-gold);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .footer-section p, .footer-section a {
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            text-decoration: none;
+            display: block;
+        }
+        .footer-section i {
+            color: var(--mu-gold);
+            width: 20px;
+            margin-left: 8px;
+        }
+        .footer-section a:hover {
+            color: white;
+        }
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #4a5a6e;
+            color: #95a5a6;
+            font-size: 0.8rem;
+        }
+        .report-link {
+            background: #34495e;
+            color: #ecf0f1;
+            padding: 0.3rem 1rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .report-link i {
+            color: var(--mu-gold);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo-area">
+            <div class="logo-icon">م</div>
+            <div class="logo-text">
+                <h2>جامعة مؤتة</h2>
+                <p>Mutah University</p>
+            </div>
+        </div>
+        <div class="contact-top">
+            <span><i class="fas fa-phone"></i> 00962-3-2372380</span>
+            <span><i class="fas fa-envelope"></i> info@mutah.edu.jo</span>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1><i class="fas fa-university"></i> دليل المعاملات الرسمي</h1>
+        <p>المرجع الشامل لجميع الإجراءات والخدمات الطلابية</p>
+        <button class="back-home-btn hidden" id="backHomeBtn"><i class="fas fa-home"></i> العودة للرئيسية</button>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="homeScreen" class="home-screen">
+        <h2>اختر طريقة البحث المناسبة</h2>
+        <div class="cards-row">
+            <div class="choice-card" id="chooseCase">
+                <i class="fas fa-user-graduate"></i>
+                <h3>حسب حالة الطالب</h3>
+                <p>طالب جديد، مستمر، متخرج، تحويل تخصص ...</p>
+            </div>
+            <div class="choice-card" id="chooseUnit">
+                <i class="fas fa-building"></i>
+                <h3>حسب الوحدة الإدارية</h3>
+                <p>التسجيل، العمادة، المكتبة، السكن ...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة التصفح -->
+    <div id="browseScreen" class="browse-screen hidden">
+        <div class="browse-header">
+            <h2 id="browseTitle"><i class="fas fa-search"></i> <span></span></h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="ابحث بكود، عنوان، وصف...">
+                <i class="fas fa-search"></i>
+            </div>
+        </div>
+        <div id="filterArea" class="filter-section"></div>
+        <div class="stats" id="stats"></div>
+        <div id="cardsGrid" class="cards-grid"></div>
+    </div>
+
+    <!-- المودال (تفاصيل المعاملة) -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModalBtn">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <div class="modal-code" id="modalCode"></div>
+            </div>
+            <div class="modal-section" id="modalStepsContainer">
+                <h3><i class="fas fa-list-ol"></i> الخطوات الأساسية</h3>
+                <ul class="steps-list" id="modalSteps"></ul>
+            </div>
+            <div class="modal-section" id="modalTipsContainer">
+                <h3><i class="fas fa-lightbulb"></i> إرشادات ونصائح</h3>
+                <div class="tips-box" id="modalTips"></div>
+            </div>
+            <div class="modal-section" id="modalMeta">
+                <p><i class="fas fa-building" style="color: var(--mu-red);"></i> الوحدة المسؤولة: <span id="modalUnit"></span></p>
+                <p><i class="fas fa-tags" style="color: var(--mu-red);"></i> تنطبق على: <span id="modalCases"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل مع التواصل -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>جامعة مؤتة</h4>
+                <p>الكرك، الأردن<br>صندوق بريد 7</p>
+                <p><i class="fas fa-phone"></i> 00962-3-2372380</p>
+                <p><i class="fas fa-fax"></i> 00962-3-2372381</p>
+                <p><i class="fas fa-envelope"></i> info@mutah.edu.jo</p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <a href="#">البوابة الإلكترونية</a>
+                <a href="#">العمادات</a>
+                <a href="#">الكليات</a>
+                <a href="#">المكتبة</a>
+            </div>
+            <div class="footer-section">
+                <h4>تواصل معنا</h4>
+                <a href="#"><i class="fab fa-facebook"></i> فيسبوك</a>
+                <a href="#"><i class="fab fa-twitter"></i> تويتر</a>
+                <a href="#"><i class="fab fa-linkedin"></i> لينكد إن</a>
+                <a href="#" class="report-link"><i class="fas fa-bug"></i> الإبلاغ عن خطأ أو اقتراح</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة &copy; 2025 جامعة مؤتة | تصميم داخلي لدليل المعاملات الرسمي</p>
+            <p style="color: #C49A6C; font-size:0.9rem; margin-top:8px;">
+                <i class="fas fa-code"></i> تصميم وتطوع: <strong>مصعب محمد سليمان الصرايرة</strong> - هذا العمل تطوعي لخدمة طلاب جامعة مؤتة
+                <!-- يمكنك إضافة رابط لينكد إن هنا إذا أردت -->
+                <!-- <a href="https://linkedin.com/in/..." target="_blank" style="color:#C49A6C; margin-right:10px;"><i class="fab fa-linkedin"></i></a> -->
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------------------------------------------
+        // 1. البيانات (سهلة التوسيع)
+        // ----------------------------------------------------------------
+        const units = [
+            { id: 'REG', name: 'وحدة التسجيل والقبول', icon: 'fa-rectangle-list' },
+            { id: 'STU', name: 'عمادة شؤون الطلاب', icon: 'fa-users' },
+            { id: 'ACA', name: 'العمادة الأكاديمية', icon: 'fa-book-open' },
+            { id: 'LIB', name: 'المكتبة المركزية', icon: 'fa-book' },
+            { id: 'FEE', name: 'وحدة الرسوم والخدمات', icon: 'fa-coins' },
+            { id: 'HOUS', name: 'السكن الجامعي', icon: 'fa-bed' },
+            { id: 'EXAM', name: 'وحدة الامتحانات', icon: 'fa-pencil' },
+            { id: 'GRAD', name: 'وحدة التخرج والوثائق', icon: 'fa-scroll' }
+        ];
+
+        const studentCases = [
+            { id: 'NEW', name: 'طالب جديد - فصل أول', icon: 'fa-star' },
+            { id: 'CONT', name: 'طالب مستمر', icon: 'fa-arrow-right' },
+            { id: 'TRANS', name: 'تحويل تخصص', icon: 'fa-arrows-spin' },
+            { id: 'GRAD', name: 'تخرج', icon: 'fa-graduation-cap' },
+            { id: 'WITHDRAW', name: 'انسحاب أو اعتذار', icon: 'fa-person-walking' },
+            { id: 'POST', name: 'دراسات عليا', icon: 'fa-magnifying-glass' }
+        ];
+
+        const transactions = [
+            // وحدة التسجيل
+            { id: 'REG-01', unitId: 'REG', title: 'تسجيل مواد الفصل الأول', 
+              summary: 'تسجيل المواد للطلبة الجدد والمستمرين عبر البوابة.',
+              steps: [
+                  'سجل الدخول إلى بوابة الطالب باستخدام الرقم الجامعي وكلمة المرور.',
+                  'اختر خطة التسجيل وتأكد من توفر المواد.',
+                  'أضف المواد إلى الجدول مع مراعاة المتطلبات السابقة.',
+                  'احفظ الجدول واطبع إشعار التسجيل.'
+              ],
+              tips: 'يُنصح بالتسجيل المبكر. راجع مرشدك الأكاديمي قبل تأكيد الجدول. تأكد من سداد الرسوم إن وجدت.',
+              caseIds: ['NEW', 'CONT'] 
+            },
+            { id: 'REG-02', unitId: 'REG', title: 'الانسحاب من مادة', 
+              summary: 'طلب الانسحاب خلال الفترة المسموحة.',
+              steps: [
+                  'ادخل إلى بوابة الطالب واختر "الانسحاب من مادة".',
+                  'حدد المادة التي ترغب بالانسحاب منها.',
+                  'أكد الطلب وانتظر الموافقة.',
+                  'تأكد من ظهور المادة في السجل الأكاديمي كـ "منسحب".'
+              ],
+              tips: 'الانسحاب بعد الفترة المحددة يتطلب موافقة العميد وقد تترتب عليه رسوم. راجع التقويم الجامعي.',
+              caseIds: ['CONT', 'TRANS'] 
+            },
+            { id: 'REG-03', unitId: 'REG', title: 'إضافة مادة متأخرة', 
+              summary: 'طلب إضافة مادة بعد انتهاء التسجيل.',
+              steps: [
+                  'قدّم طلب إضافة متأخرة عبر بوابة الطالب.',
+                  'انتظر موافقة القسم المختص.',
+                  'في حال الموافقة، سجل المادة إلكترونياً.'
+              ],
+              tips: 'الإضافة المتأخرة تخضع لموافقة رئيس القسم وقد تترتب عليها غرامة مالية.',
+              caseIds: ['NEW', 'CONT'] 
+            },
+            { id: 'REG-04', unitId: 'REG', title: 'تأجيل الدراسة', 
+              summary: 'تقديم طلب تأجيل الفصل لظروف.',
+              steps: [
+                  'قدّم طلب تأجيل عبر بوابة الطالب (من قائمة الخدمات).',
+                  'أرفق المستندات الداعمة (تقرير طبي، ظروف قاهرة).',
+                  'انتظر الرد خلال أسبوعين.'
+              ],
+              tips: 'يمكن التأجيل لفصل دراسي واحد فقط كحد أقصى متتالي. راجع شروط التأجيل في دليل الطالب.',
+              caseIds: ['WITHDRAW'] 
+            },
+            { id: 'REG-05', unitId: 'REG', title: 'التحويل إلى كلية أخرى', 
+              summary: 'طلب تحويل التخصص داخل الجامعة.',
+              steps: [
+                  'قدّم طلب تحويل إلى عمادة القبول والتسجيل.',
+                  'أرفق كشف علامات وسجل أكاديمي.',
+                  'انتظر نتيجة مفاضلة التحويل.'
+              ],
+              tips: 'يشترط معدل تراكمي لا يقل عن 2.5. راجع شروط الكلية المحول إليها.',
+              caseIds: ['TRANS'] 
+            },
+            // عمادة شؤون الطلاب
+            { id: 'STU-01', unitId: 'STU', title: 'استخراج بطاقة طالب', 
+              summary: 'إصدار بطاقة جديدة أو بدل فاقد.',
+              steps: [
+                  'ادخل إلى بوابة الطالب واختر "طلب بطاقة جامعية".',
+                  'حمّل صورة شخصية حديثة.',
+                  'ادفع الرسوم إن وجدت إلكترونياً.',
+                  'استلم البطاقة من عمادة شؤون الطلاب بعد أسبوع.'
+              ],
+              tips: 'البطاقة ضرورية لدخول المباني واستعارة الكتب. في حال الفقدان، قدّم بلاغاً فوراً.',
+              caseIds: ['NEW', 'CONT', 'TRANS'] 
+            },
+            // يمكن إضافة المزيد هنا...
+        ];
+
+        // ----------------------------------------------------------------
+        // 2. حالة التطبيق
+        // ----------------------------------------------------------------
+        let currentMode = null;          // 'case' أو 'unit'
+        let activeFilter = null;         // معرف الحالة أو الوحدة المختار (null للكل)
+        let searchTerm = '';
+
+        // عناصر DOM
+        const homeScreen = document.getElementById('homeScreen');
+        const browseScreen = document.getElementById('browseScreen');
+        const backBtn = document.getElementById('backHomeBtn');
+        const browseTitle = document.querySelector('#browseTitle span');
+        const filterArea = document.getElementById('filterArea');
+        const searchInput = document.getElementById('searchInput');
+        const cardsGrid = document.getElementById('cardsGrid');
+        const statsDiv = document.getElementById('stats');
+        
+        // عناصر المودال
+        const modal = document.getElementById('transactionModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalCode = document.getElementById('modalCode');
+        const modalSteps = document.getElementById('modalSteps');
+        const modalTips = document.getElementById('modalTips');
+        const modalUnit = document.getElementById('modalUnit');
+        const modalCases = document.getElementById('modalCases');
+
+        // أزرار الاختيار في الرئيسية
+        document.getElementById('chooseCase').addEventListener('click', () => startBrowsing('case'));
+        document.getElementById('chooseUnit').addEventListener('click', () => startBrowsing('unit'));
+
+        // زر العودة للرئيسية
+        backBtn.addEventListener('click', goHome);
+
+        // حدث البحث
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            filterAndRender();
+        });
+
+        // إغلاق المودال
+        closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+        // ----------------------------------------------------------------
+        // 3. دوال التحكم بالشاشات
+        // ----------------------------------------------------------------
+        function goHome() {
+            homeScreen.classList.remove('hidden');
+            browseScreen.classList.add('hidden');
+            backBtn.classList.add('hidden');
+            currentMode = null;
+            activeFilter = null;
+            searchTerm = '';
+            searchInput.value = '';
+        }
+
+        function startBrowsing(mode) {
+            currentMode = mode;
+            activeFilter = null;
+            searchTerm = '';
+            searchInput.value = '';
+            browseTitle.textContent = (mode === 'case') ? 'التصفح حسب حالة الطالب' : 'التصفح حسب الوحدة الإدارية';
+            renderFilterButtons(mode);
+            homeScreen.classList.add('hidden');
+            browseScreen.classList.remove('hidden');
+            backBtn.classList.remove('hidden');
+            filterAndRender();
+        }
+
+        // ----------------------------------------------------------------
+        // 4. دوال العرض والتصفية
+        // ----------------------------------------------------------------
+        function renderFilterButtons(mode) {
+            let html = '';
+            if (mode === 'case') {
+                html += '<div class="filter-title"><i class="fas fa-user-graduate"></i> حالات الطالب</div>';
+                html += '<div class="filter-buttons" id="dynamicFilterButtons">';
+                html += `<button class="filter-btn ${!activeFilter ? 'active' : ''}" data-id="all"><i class="fas fa-border-all"></i> الكل</button>`;
+                studentCases.forEach(c => {
+                    const activeClass = (activeFilter === c.id) ? 'active' : '';
+                    html += `<button class="filter-btn ${activeClass}" data-id="${c.id}"><i class="fas ${c.icon}"></i> ${c.name}</button>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<div class="filter-title"><i class="fas fa-building"></i> الوحدات الإدارية</div>';
+                html += '<div class="filter-buttons" id="dynamicFilterButtons">';
+                html += `<button class="filter-btn ${!activeFilter ? 'active' : ''}" data-id="all"><i class="fas fa-border-all"></i> الكل</button>`;
+                units.forEach(u => {
+                    const activeClass = (activeFilter === u.id) ? 'active' : '';
+                    html += `<button class="filter-btn ${activeClass}" data-id="${u.id}"><i class="fas ${u.icon}"></i> ${u.name}</button>`;
+                });
+                html += '</div>';
+            }
+            filterArea.innerHTML = html;
+
+            document.querySelectorAll('#dynamicFilterButtons .filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id === 'all' ? null : this.dataset.id;
+                    activeFilter = id;
+                    renderFilterButtons(currentMode);
+                    filterAndRender();
+                });
+            });
+        }
+
+        function filterTransactions() {
+            return transactions.filter(t => {
+                if (currentMode === 'case') {
+                    if (activeFilter && !t.caseIds.includes(activeFilter)) return false;
+                } else {
+                    if (activeFilter && t.unitId !== activeFilter) return false;
+                }
+                if (searchTerm.trim() !== '') {
+                    const term = searchTerm.trim().toLowerCase();
+                    const unit = units.find(u => u.id === t.unitId);
+                    const unitName = unit ? unit.name : '';
+                    const caseNames = t.caseIds.map(cid => {
+                        const cs = studentCases.find(sc => sc.id === cid);
+                        return cs ? cs.name : '';
+                    }).join(' ');
+                    const haystack = `${t.id} ${t.title} ${t.summary} ${unitName} ${caseNames}`.toLowerCase();
+                    return haystack.includes(term);
+                }
+                return true;
+            });
+        }
+
+        function renderCards(transactionsToRender) {
+            if (transactionsToRender.length === 0) {
+                cardsGrid.innerHTML = '<div class="no-result" style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #7f8c8d;">لا توجد معاملات تطابق البحث</div>';
+                updateStats(0, 0);
+                return;
+            }
+
+            let html = '';
+            transactionsToRender.forEach(t => {
+                const unit = units.find(u => u.id === t.unitId);
+                const unitName = unit ? unit.name : t.unitId;
+                const unitIcon = unit ? unit.icon : 'fa-building';
+                const caseTags = t.caseIds.map(cid => {
+                    const c = studentCases.find(sc => sc.id === cid);
+                    return c ? `<span class="case-tag"><i class="fas ${c.icon}"></i> ${c.name}</span>` : '';
+                }).join('');
+
+                html += `
+                    <div class="card" data-id="${t.id}">
+                        <div class="card-header">
+                            <span><i class="fas ${unitIcon}"></i> ${unitName}</span>
+                            <span class="unit-badge">${t.id}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-code">${t.id}</div>
+                            <div class="card-title">${t.title}</div>
+                            <div class="card-desc">${t.summary}</div>
+                        </div>
+                        <div class="card-footer">
+                            ${caseTags}
+                        </div>
+                    </div>
+                `;
+            });
+
+            cardsGrid.innerHTML = html;
+
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const transactionId = this.dataset.id;
+                    const transaction = transactions.find(t => t.id === transactionId);
+                    if (transaction) showModal(transaction);
+                });
+            });
+
+            const uniqueUnits = new Set(transactionsToRender.map(t => t.unitId)).size;
+            updateStats(transactionsToRender.length, uniqueUnits);
+        }
+
+        function updateStats(count, unitsCount) {
+            statsDiv.innerHTML = `
+                <div class="stat-item"><i class="fas fa-tasks"></i> ${count} معاملة</div>
+                <div class="stat-item"><i class="fas fa-building"></i> ${unitsCount} وحدات</div>
+            `;
+        }
+
+        function filterAndRender() {
+            const filtered = filterTransactions();
+            renderCards(filtered);
+        }
+
+        // ----------------------------------------------------------------
+        // 5. عرض المودال
+        // ----------------------------------------------------------------
+        function showModal(transaction) {
+            modalTitle.textContent = transaction.title;
+            modalCode.textContent = `الكود: ${transaction.id}`;
+
+            let stepsHtml = '';
+            if (transaction.steps && transaction.steps.length) {
+                transaction.steps.forEach(step => {
+                    stepsHtml += `<li>${step}</li>`;
+                });
+            } else {
+                stepsHtml = '<li>لا توجد خطوات محددة حاليًا</li>';
+            }
+            modalSteps.innerHTML = stepsHtml;
+
+            modalTips.textContent = transaction.tips || 'لا توجد إرشادات إضافية حاليًا';
+
+            const unit = units.find(u => u.id === transaction.unitId);
+            modalUnit.textContent = unit ? unit.name : transaction.unitId;
+
+            const casesList = transaction.caseIds.map(cid => {
+                const c = studentCases.find(sc => sc.id === cid);
+                return c ? c.name : cid;
+            }).join('، ');
+            modalCases.textContent = casesList || 'غير محدد';
+
+            modal.style.display = 'flex';
+        }
+
+        // بداية التطبيق
+        goHome();
+    </script>
+</body>
+</html>
